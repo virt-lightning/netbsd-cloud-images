@@ -20,7 +20,7 @@ newfs -O 2 -n 500000 -b 4096 /dev/rdk1
 mount /dev/dk1 ${MNT}
 
 for i in base.tgz etc.tgz kern-GENERIC.tgz; do
-    curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-8.0/amd64/binary/sets/${i} | tar xfz - -C new
+    curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-8.0/x86_64/binary/sets/${i} | tar xfz - -C new
 done
 echo 'rc_configured=YES
 sshd="YES"
@@ -47,7 +47,7 @@ cp /etc/resolv.conf new/etc/resolv.conf
 
 
 ( cd new/dev ; ./MAKEDEV all )
-PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/8.0/All/
+PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/8.0/All/
 export PKG_PATH
 
 curl -L https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz - -C new/tmp
