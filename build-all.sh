@@ -1,11 +1,15 @@
 #!/bin/sh
+version=$1
+if [ -z $version ]; then
+    echo "Usage $0 version"
+    exit 1
+fi
 set -eux
 
 MNT=/root/new
 VND=vnd0
 VERSION="8.0 7.2"
 
-for version in $VERSION; do
 file="netbsd-${version}.raw"
 mkdir -p ${MNT}
 dd if=/dev/zero of=${file} bs=4096 count=1000000 progress=62000
@@ -89,4 +93,3 @@ umount ${MNT}
 gpt biosboot -L root ${VND} 
 installboot -v -o timeout=0 /dev/r${dk_dev} /usr/mdec/bootxx_ffsv2
 vnconfig -u vnd0
-done
