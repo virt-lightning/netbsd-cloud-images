@@ -7,7 +7,7 @@ fi
 set -eux
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/pkg/sbin:/usr/pkg/bin
-MNT=/root/new
+MNT=$HOME/new
 VND=vnd0
 VERSION="8.0 7.2"
 export PATH
@@ -87,7 +87,7 @@ export PKG_PATH
 
 curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz - -C $MNT/tmp
 
-chroot new sh -c 'cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
+chroot $HOME/new sh -c 'cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
 chmod +t ${MNT}/tmp
 umount ${MNT}
 
