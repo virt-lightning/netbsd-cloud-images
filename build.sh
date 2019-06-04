@@ -32,7 +32,6 @@ for i in base.tgz etc.tgz kern-GENERIC.tgz; do
 done
 echo 'rc_configured=YES
 sshd=YES
-dhcpcd=YES
 grow_root_fs=YES
 ' >> $MNT/etc/rc.conf
 
