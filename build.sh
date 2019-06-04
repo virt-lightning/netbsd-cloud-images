@@ -91,6 +91,8 @@ chroot $HOME/new sh -c 'cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
 chroot $HOME/new sh -c 'pkg_add pkgin'
 chroot $HOME/new sh -c 'pkgin update'
 chmod +t ${MNT}/tmp
+mkdir ${MNT}/kern
+mkdir ${MNT}/proc
 umount ${MNT}
 
 gpt biosboot -L root ${VND} 
