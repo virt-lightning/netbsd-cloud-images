@@ -6,10 +6,11 @@ if [ -z $version ]; then
 fi
 set -eux
 
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/pkg/sbin:/usr/pkg/bin
 MNT=/root/new
 VND=vnd0
 VERSION="8.0 7.2"
-
+export PATH
 file="netbsd-${version}.raw"
 mkdir -p ${MNT}
 dd if=/dev/zero of=${file} bs=4096 count=1000000 progress=62000
