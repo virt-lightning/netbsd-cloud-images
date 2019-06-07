@@ -9,7 +9,6 @@ set -eux
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/pkg/sbin:/usr/pkg/bin
 MNT=$HOME/new
 VND=vnd0
-VERSION="8.0 7.2"
 export PATH
 file="netbsd-${version}.raw"
 mkdir -p ${MNT}
@@ -30,8 +29,8 @@ mount /dev/${dk_dev} ${MNT}
 for i in base.tgz etc.tgz kern-GENERIC.tgz; do
     curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-${version}/amd64/binary/sets/${i} | tar xfz - -C ${MNT}
 done
-echo 'rc_configured=YES
-sshd=YES
+sed -i'' "s/^rc_configured=.*/rc_configured=YES/" /etc/rc.conf
+echo 'sshd=YES
 grow_root_fs=YES
 ' >> $MNT/etc/rc.conf
 
