@@ -88,6 +88,7 @@ curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz 
 chroot $HOME/new sh -c 'cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
 chroot $HOME/new sh -c 'pkg_add pkgin'
 chroot $HOME/new sh -c 'pkgin update'
+chroot $HOME/new sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
 mkdir ${MNT}/proc
