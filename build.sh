@@ -76,15 +76,15 @@ cp $MNT/usr/mdec/boot $MNT/boot
 cp /boot.cfg $MNT/boot.cfg
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
-chroot $HOME/new sh -c 'echo "export PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/$(uname -m)/$(uname -r)/All/" >> /etc/profile'
+chroot $HOME/new sh -c "echo 'export PKG_PATH=ftp://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/${version}/All/' >> /etc/profile"
 
 ( cd $MNT/dev ; ./MAKEDEV all )
 
 curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz - -C $MNT/tmp
 
 chroot $HOME/new sh -c '. /etc/profile; cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
-chroot $HOME/new sh -c 'pkg_add pkgin'
-chroot $HOME/new sh -c 'pkgin update'
+chroot $HOME/new sh -c '. /etc/profile; pkg_add pkgin'
+chroot $HOME/new sh -c '. /etc/profile; pkgin update'
 chroot $HOME/new sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
