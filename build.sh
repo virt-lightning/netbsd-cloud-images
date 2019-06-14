@@ -10,7 +10,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/pkg/sbin:/usr/pkg/bin
 MNT=$HOME/new
 VND=vnd0
 export PATH
-file="netbsd-${version}.raw"
+file="final.raw"
 mkdir -p ${MNT}
 dd if=/dev/zero of=${file} bs=4096 count=1000000 progress=62000
 vnconfig ${VND} ${file}
