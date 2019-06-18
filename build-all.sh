@@ -1,64 +1,91 @@
 #!/bin/sh
-set -eux
-
-MNT=/root/new
+# Optional args:
+# -e		- enable UEFI firmware (from current host)
+# -v "8.1"	- build version
+EFI=0			# no UEFI by default
+MNT=$( mktemp -d )	# image mount point
+EFIMNT=			# efi partition mount point
 VND=vnd0
 VERSION="8.0 7.2"
+# NetBSD no readlink in base ?
+#MYDIR=$( dirname `readlink $0` )
+# get cwd
+case "${0}" in
+	.*)
+		MYDIR=${PWD%%./*} ;;
+	*)
+		MYDIR=$( dirname $0 ) ;;
+esac
+
+cleanup()
+{
+	umount -f ${MNT} > /dev/null 2>&1 || true
+	[ -d "${EFIMNT}" ] && -f ${EFIMNT} > /dev/null 2>&1 || true
+	vnconfig -u ${VND}
+	[ -d "${MNT}" ] && rmdir ${MNT} || true
+	[ -d "${EFIMNT}" ] && rmdir ${EFIMNT} || true
+}
+
+while getopts "ev:" opt; do
+	case "${opt}" in
+		e) EFI=1 ;;
+		v) VERSION="${OPTARG}" ;;
+	esac
+done
+
+trap "cleanup" HUP INT ABRT BUS TERM EXIT
+
+set -eux
 
 for version in $VERSION; do
 file="netbsd-${version}.raw"
-mkdir -p ${MNT}
 dd if=/dev/zero of=${file} bs=4096 count=1000000 progress=62000
 vnconfig ${VND} ${file}
 gpt create ${VND}
+[ ${EFI} -eq 1 ] && gpt add -a 2m -l "EFI system" -t efi -s 128m ${VND}
 gpt add -a 4k -l swap -s 1G -t swap ${VND}
 gpt add -a 4k -s 2G -l root -t ffs ${VND}
 gpt show ${VND}
 
 dkctl ${VND} makewedges
 dk_dev=$(dkctl ${VND} listwedges|grep ffs|sed 's,:.*,,')
+if [ ${EFI} -eq 1 ]; then
+	dk_efi_dev=$( dkctl ${VND} listwedges |awk '/type: msdos/{print $1}' | tr -d ":" )
+	if [ -z "${dk_efi_dev}" ]; then
+		echo "Unable to locate EFI gpt"
+		exit 1
+	fi
+
+	newfs_msdos /dev/r${dk_efi_dev}
+	EFIMNT=$( mktemp -d )
+	mount -t msdos /dev/${dk_efi_dev} ${EFIMNT}
+	mkdir -p ${EFIMNT}/EFI/boot
+	cp /usr/mdec/*.efi ${EFIMNT}/EFI/boot/
+	umount ${EFIMNT}
+	rmdir ${EFIMNT}
+	FFS_INDEX="3"
+else
+	FFS_INDEX="2"
+fi
 # newfs dos and ffs
 sleep 2
 newfs -O 2 -n 500000 -b 4096 /dev/r${dk_dev}
 mount /dev/${dk_dev} ${MNT}
 
 for i in base.tgz etc.tgz kern-GENERIC.tgz; do
-    curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-${version}/amd64/binary/sets/${i} | tar xfz - -C ${MNT}
+	curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-${version}/amd64/binary/sets/${i} | tar xfz - -C ${MNT}
 done
+
 echo 'rc_configured=YES
 sshd=YES
 dhcpcd=YES
 grow_root_fs=YES
 ' >> $MNT/etc/rc.conf
 
-echo '#!/bin/sh
-#
-# PROVIDE: grow_root_fs
-# BEFORE:  fsck_root
-
-$_rc_subr_loaded . /etc/rc.subr
-
-name="grow_root_fs"
-rcvar=$name
-start_cmd="grow_root_fs_start"
-stop_cmd=":"
-
-grow_root_fs_start()
-{
-gpt resizedisk ld0
-gpt resize -i 2 ld0 && reboot
-if resize_ffs -c /dev/r$(sysctl -r kern.root_device); then
-    resize_ffs -p -y -v /dev/r$(sysctl -r kern.root_device) && reboot -n
-else
-    sed -i "s,grow_root_fs=.*,# grow_root_fs=NO  # Auto-disabled," /etc/rc.conf
-fi
-}
-
-load_rc_config $name
-run_rc_command "$1"
-' > $MNT/etc/rc.d/grow_root_fs
+# Adjust FFS index in rc.d script template
+sed -Ees:%%FFS_INDEX%%:"${FFS_INDEX}":g \
+	${MYDIR}/scripts/grow_root_fs.tpl > ${MNT}/etc/rc.d/grow_root_fs
 chmod +x $MNT/etc/rc.d/grow_root_fs
-
 
 echo '
 NAME=root	/		ffs	rw	1 1
@@ -73,20 +100,21 @@ cp $MNT/usr/mdec/boot $MNT/boot
 cp /boot.cfg $MNT/boot.cfg
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
-echo 'PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/8.0/All/
-export PKG_PATH' >> $MNT/etc/profile
+cat >> $MNT/etc/profile <<EOF
+PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/${version}/All/
+export PKG_PATH
+EOF
 
 ( cd $MNT/dev ; ./MAKEDEV all )
-PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/8.0/All/
+PKG_PATH=http://cdn.netbsd.org/pub/pkgsrc/packages/NetBSD/x86_64/${version}/All/
 export PKG_PATH
 
 curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz - -C $MNT/tmp
 
-chroot new sh -c 'cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
+chroot ${MNT} sh -c 'cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
 chmod +t ${MNT}/tmp
 umount ${MNT}
 
 gpt biosboot -L root ${VND} 
 installboot -v -o timeout=0 /dev/r${dk_dev} /usr/mdec/bootxx_ffsv2
-vnconfig -u vnd0
 done
