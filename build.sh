@@ -117,7 +117,8 @@ curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz 
 chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 chroot $MNT sh -c '. /etc/profile; pkgin update'
-#chroot $HOME/new sh -c 'usermod -C yes root'
+# Disable root password
+chroot $HOME/new sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
 mkdir ${MNT}/proc
