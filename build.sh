@@ -118,7 +118,7 @@ chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-netbsd; ./tools/build-on-n
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 chroot $MNT sh -c '. /etc/profile; pkgin update'
 # Disable root password
-chroot $HOME/new sh -c 'usermod -C yes root'
+# chroot $HOME/new sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
 mkdir ${MNT}/proc
