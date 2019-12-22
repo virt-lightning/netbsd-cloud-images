@@ -80,7 +80,12 @@ sleep 2
 newfs -O 2 -n 500000 -b 4096 /dev/r${dk_dev}
 mount /dev/${dk_dev} ${MNT}
 
-for i in base.tgz etc.tgz kern-GENERIC.tgz; do
+if echo $version|egrep "^[78]"; then
+    base_packages="base.tgz etc.tgz kern-GENERIC.tgz"
+else
+    base_packages="base.tar.xz etc.tar.xz kern-GENERIC.tar.xz"
+fi
+for i in ${base_packages}; do
     curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-${version}/amd64/binary/sets/${i} | tar xfz - -C ${MNT}
 done
 sed -i'' "s/^rc_configured=.*/rc_configured=YES/" $MNT/etc/rc.conf
