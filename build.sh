@@ -113,7 +113,9 @@ cp $MNT/usr/mdec/boot $MNT/boot
 cp /boot.cfg $MNT/boot.cfg
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
-chroot $MNT sh -c "echo 'export PKG_PATH=ftp://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/amd64/${version}/All/' >> /etc/profile"
+# TODO: use $version again once 9.0 is ready
+#echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/All/" >> $MNT/etc/pkg_install.conf
+echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/8.1/All/" >> $MNT/etc/pkg_install.conf
 
 ( cd $MNT/dev ; ./MAKEDEV all )
 
