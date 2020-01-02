@@ -45,12 +45,12 @@ EFIMNT=            # efi partition mount point
 export PATH
 file="final.raw"
 mkdir -p ${MNT}
-dd if=/dev/zero of=${file} bs=4096 count=1000000 progress=62000
+dd if=/dev/zero of=${file} bs=4096 count=400000 progress=62000
 vnconfig ${VND} ${file}
 gpt create ${VND}
 [ ${EFI} -eq 1 ] && gpt add -a 2m -l "EFI system" -t efi -s 128m ${VND}
-gpt add -a 4k -l swap -s 1G -t swap ${VND}
-gpt add -a 4k -s 2G -l root -t ffs ${VND}
+gpt add -a 4k -l swap -s 512m -t swap ${VND}
+gpt add -a 4k -s 1000m -l root -t ffs ${VND}
 gpt show ${VND}
 
 dkctl ${VND} makewedges
