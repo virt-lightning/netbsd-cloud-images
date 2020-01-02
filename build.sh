@@ -110,7 +110,11 @@ procfs /proc procfs rw
 tmpfs           /var/shm        tmpfs   rw,-m1777,-sram%25
 ' > $MNT/etc/fstab
 cp $MNT/usr/mdec/boot $MNT/boot
-cp /boot.cfg $MNT/boot.cfg
+
+echo 'menu=Boot with serial console:consdev com0;boot
+menu=Boot without serial console;boot
+default=1
+timeout=0' > $MNT/boot.cfg
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
 # TODO: use $version again once 9.0 is ready
