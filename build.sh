@@ -128,8 +128,11 @@ echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/8.1/All/" >
 
 curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz - -C $MNT/tmp
 
+
 chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
+
+echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
 chroot $MNT sh -c '. /etc/profile; pkgin update'
 # Disable root password
 # chroot $HOME/new sh -c 'usermod -C yes root'
