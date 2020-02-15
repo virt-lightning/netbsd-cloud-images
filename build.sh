@@ -134,8 +134,9 @@ chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 
 echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
 chroot $MNT sh -c '. /etc/profile; pkgin update'
-# Disable root password
-# chroot $HOME/new sh -c 'usermod -C yes root'
+
+# Disable root account
+test -z "$DEBUG" && chroot $HOME/new sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
 mkdir ${MNT}/proc
