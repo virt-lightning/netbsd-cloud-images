@@ -1,9 +1,18 @@
 #!/bin/sh
 version=$1
+repo=$2
+ref=$3
 if [ -z $version ]; then
     echo "Usage $0 version"
     exit 1
 fi
+if [ -z "${repo}" ]; then
+    repo="canonical/cloud-init"
+fi
+if [ -z "${ref}" ]; then
+    ref="master"
+fi
+
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/pkg/sbin:/usr/pkg/bin
 MNT=$HOME/new
@@ -126,10 +135,10 @@ echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/8.1/All/" >
 
 ( cd $MNT/dev ; ./MAKEDEV all )
 
-curl -L -k https://github.com/goneri/cloud-init/archive/netbsd.tar.gz | tar xfz - -C $MNT/tmp
+curl -L -k https://github.com/${repo}/archive/${ref}.tar.gz | tar xfz - -C $MNT/tmp
 
 
-chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-netbsd; ./tools/build-on-netbsd'
+chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; ./tools/build-on-netbsd'
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 
 echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
