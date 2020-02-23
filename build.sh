@@ -130,8 +130,7 @@ sed -i 's,^tty00.*,tty00   "/usr/libexec/getty std.115200"   vt100 on secure,' $
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
 # TODO: use $version again once 9.0 is ready
-#echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/All/" >> $MNT/etc/pkg_install.conf
-echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/8.1/All/" >> $MNT/etc/pkg_install.conf
+echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/All/" >> $MNT/etc/pkg_install.conf
 
 ( cd $MNT/dev ; ./MAKEDEV all )
 
