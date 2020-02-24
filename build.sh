@@ -141,7 +141,7 @@ chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; ./tools/build-on-netbsd
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 
 echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
-chroot $MNT sh -c '. /etc/profile; pkgin update'
+#chroot $MNT sh -c '. /etc/profile; pkgin update'
 
 # Disable root account
 test -z "$DEBUG" && chroot $HOME/new sh -c 'usermod -C yes root'
