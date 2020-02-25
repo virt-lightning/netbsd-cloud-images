@@ -2,6 +2,7 @@
 version=$1
 repo=$2
 ref=$3
+debug=$4
 if [ -z $version ]; then
     echo "Usage $0 version"
     exit 1
@@ -11,6 +12,9 @@ if [ -z "${repo}" ]; then
 fi
 if [ -z "${ref}" ]; then
     ref="master"
+fi
+if [ -z "${debug}" ]; then
+    debug=""
 fi
 
 
@@ -144,7 +148,7 @@ echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $
 #chroot $MNT sh -c '. /etc/profile; pkgin update'
 
 # Disable root account
-test -z "$DEBUG" && chroot $HOME/new sh -c 'usermod -C yes root'
+test -z "$debug" && chroot $MNT sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
 mkdir ${MNT}/proc
