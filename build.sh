@@ -129,7 +129,7 @@ echo 'menu=Boot with serial console:consdev com0;boot
 menu=Boot without serial console;boot
 default=1
 timeout=0' > $MNT/boot.cfg
-sed -i 's,^tty00.*,tty00   "/usr/libexec/getty std.115200"   vt100 on secure,' $MNT/etc/ttys
+sed -i 's,^tty00.*,tty00\t"/usr/libexec/getty std.9600"   vt100 on secure,' $MNT/etc/ttys
 
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
