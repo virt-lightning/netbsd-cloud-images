@@ -102,7 +102,8 @@ for i in ${base_packages}; do
     curl -L http://ftp.fr.netbsd.org/pub/NetBSD/NetBSD-${version}/amd64/binary/sets/${i} | tar xfz - -C ${MNT}
 done
 sed -i'' "s/^rc_configured=.*/rc_configured=YES/" $MNT/etc/rc.conf
-echo 'sshd=YES
+echo 'wscons=YES
+sshd=YES
 grow_root_fs=YES
 ' >> $MNT/etc/rc.conf
 
@@ -129,7 +130,9 @@ echo 'menu=Boot with serial console:consdev com0;boot
 menu=Boot without serial console;boot
 default=1
 timeout=0' > $MNT/boot.cfg
-sed -i 's,^tty00.*,tty00\t"/usr/libexec/getty std.9600"   vt100 on secure,' $MNT/etc/ttys
+sed -i 's,^\(tty00.\).*,\1"/usr/libexec/getty std.9600"   vt100 on secure,' $MNT/etc/ttys
+sed -i 's,^\(ttyE0.\).*,\1"/usr/libexec/getty Pc"         wsvt25  on secure,' $MNT/etc/ttys
+sed -i 's,#\(screen[[:space:]]0.*\).*,\1,' /etc/wscons.conf
 
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
