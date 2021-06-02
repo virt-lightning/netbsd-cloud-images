@@ -144,7 +144,8 @@ echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/Al
 curl -L -k https://github.com/${repo}/archive/${ref}.tar.gz | tar xfz - -C $MNT/tmp
 
 
-chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; ./tools/build-on-netbsd'
+chroot $MNT sh -c '. /etc/profile; pkg_add python38'
+chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; PYTHON=/usr/pkg/bin/python3.8 ./tools/build-on-netbsd'
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 
 echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
