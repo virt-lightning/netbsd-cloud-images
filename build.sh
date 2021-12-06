@@ -146,6 +146,8 @@ curl -L -k https://github.com/${repo}/archive/${ref}.tar.gz | tar xfz - -C $MNT/
 
 chroot $MNT sh -c '. /etc/profile; pkg_add python38'
 chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; PYTHON=/usr/pkg/bin/python3.8 ./tools/build-on-netbsd'
+# Ensure we've got all the dependency installed as expected
+chroot $MNT sh -c '. /etc/profile; /usr/pkg/bin/python3.8 -mcloudinit.handlers.cloud_config'
 chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
 
 echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
