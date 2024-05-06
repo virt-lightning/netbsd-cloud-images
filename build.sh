@@ -137,7 +137,7 @@ sed -i 's,#\(screen[[:space:]]0.*\).*,\1,' /etc/wscons.conf
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
 # TODO: use $version again once 9.0 is ready
-echo "PKG_PATH=ftp://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/All/" >> $MNT/etc/pkg_install.conf
+echo "PKG_PATH=http://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/All" >> $MNT/etc/pkg_install.conf
 
 ( cd $MNT/dev ; ./MAKEDEV all )
 
