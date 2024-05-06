@@ -144,8 +144,9 @@ echo "PKG_PATH=http://ftp.NetBSD.org/pub/pkgsrc/packages/NetBSD/amd64/$version/A
 curl -L -k https://github.com/${repo}/archive/${ref}.tar.gz | tar xfz - -C $MNT/tmp
 
 
+pkg_add -P $MNT mozilla-rootcerts
+chroot $MNT sh -c 'mozilla-rootcerts install'
 chroot $MNT sh -c '. /etc/profile; pkg_add python312'
-chroot $MNT sh -c '. /etc/profile; pkg_add mozilla-rootcerts; mozilla-rootcerts install'
 chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; PYTHON=/usr/pkg/bin/python3.12 ./tools/build-on-netbsd'
 # Ensure we've got all the dependency installed as expected
 chroot $MNT sh -c '. /etc/profile; /usr/pkg/bin/python3.12 -mcloudinit.handlers.cloud_config'
