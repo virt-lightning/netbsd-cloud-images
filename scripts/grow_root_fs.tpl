@@ -14,7 +14,7 @@ grow_root_fs_start()
 {
    disk=$(dmesg|awk '/boot device/ {print $5}')
    gpt resizedisk ${disk}
-   gpt resize -i %%FFS_INDEX%% ${disk} && reboot
+   gpt resize -i %%FFS_INDEX%% ${disk} && reboot -nq
    if resize_ffs -c /dev/r$(sysctl -r kern.root_device); then
        resize_ffs -p -y -v /dev/r$(sysctl -r kern.root_device) && reboot -n
    else
