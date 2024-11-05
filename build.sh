@@ -146,7 +146,7 @@ curl -L -k https://github.com/${repo}/archive/${ref}.tar.gz | tar xfz - -C $MNT/
 
 pkg_add -P $MNT mozilla-rootcerts
 chroot $MNT /bin/sh -c 'mozilla-rootcerts install'
-chroot $MNT /bin/sh -c '. /etc/profile; pkg_add python312 py312-pip; python3.12 -m pip install jsonpointer'
+chroot $MNT /bin/sh -c '. /etc/profile; pkg_add python312 py312-pip; python3.12 -m pip --no-cache-dir install jsonpointer'
 chroot $MNT /bin/sh -c '. /etc/profile; cd /tmp/cloud-init-*; PYTHON=/usr/pkg/bin/python3.12 ./tools/build-on-netbsd'
 # Ensure we've got all the dependency installed as expected
 chroot $MNT /bin/sh -c '. /etc/profile; /usr/pkg/bin/python3.12 -mcloudinit.handlers.cloud_config'
