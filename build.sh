@@ -145,18 +145,18 @@ curl -L -k https://github.com/${repo}/archive/${ref}.tar.gz | tar xfz - -C $MNT/
 
 
 pkg_add -P $MNT mozilla-rootcerts
-chroot $MNT sh -c 'mozilla-rootcerts install'
-chroot $MNT sh -c '. /etc/profile; pkg_add python312'
-chroot $MNT sh -c '. /etc/profile; cd /tmp/cloud-init-*; PYTHON=/usr/pkg/bin/python3.12 ./tools/build-on-netbsd'
+chroot $MNT /bin/sh -c 'mozilla-rootcerts install'
+chroot $MNT /bin/sh -c '. /etc/profile; pkg_add python312'
+chroot $MNT /bin/sh -c '. /etc/profile; cd /tmp/cloud-init-*; PYTHON=/usr/pkg/bin/python3.12 ./tools/build-on-netbsd'
 # Ensure we've got all the dependency installed as expected
-chroot $MNT sh -c '. /etc/profile; /usr/pkg/bin/python3.12 -mcloudinit.handlers.cloud_config'
-chroot $MNT sh -c '. /etc/profile; pkg_add pkgin'
+chroot $MNT /bin/sh -c '. /etc/profile; /usr/pkg/bin/python3.12 -mcloudinit.handlers.cloud_config'
+chroot $MNT /bin/sh -c '. /etc/profile; pkg_add pkgin'
 
 echo 'http://ftp.netbsd.org/pub/pkgsrc/packages/NetBSD/$arch/$osrelease/All' > $MNT/usr/pkg/etc/pkgin/repositories.conf
-#chroot $MNT sh -c '. /etc/profile; pkgin update'
+#chroot $MNT /bin/sh -c '. /etc/profile; pkgin update'
 
 # Disable root account
-test -z "$debug" && chroot $MNT sh -c 'usermod -C yes root'
+test -z "$debug" && chroot $MNT /bin/sh -c 'usermod -C yes root'
 chmod +t ${MNT}/tmp
 mkdir ${MNT}/kern
 mkdir ${MNT}/proc
