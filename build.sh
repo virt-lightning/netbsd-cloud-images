@@ -132,7 +132,7 @@ default=1
 timeout=0' > $MNT/boot.cfg
 sed -i 's,^\(tty00.\).*,\1"/usr/libexec/getty std.9600"   vt100 on secure,' $MNT/etc/ttys
 sed -i 's,^\(ttyE0.\).*,\1"/usr/libexec/getty Pc"         wsvt25  on secure,' $MNT/etc/ttys
-sed -i 's,#\(screen[[:space:]]0.*\).*,\1,' /etc/wscons.conf
+sed -i 's,#\(screen[[:space:]]0.*\).*,\1,' $MNT/etc/wscons.conf
 
 cp /etc/resolv.conf $MNT/etc/resolv.conf
 
